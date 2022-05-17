@@ -7,10 +7,13 @@
 *.cmx
 *.cmxs
 *.cmxa
-ft_turing
-a.out
-# ocamlbuild working directory
-_build/
 
 # Merlin configuring file for Vim and Emacs
 .merlin
+*/*.cmx
+*/*.cmi
+*/*.o
+*/*.log
+*/*.cache
+ft_turing
+check
