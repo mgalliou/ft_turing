@@ -4,10 +4,13 @@ RM        = rm -rf
 OCAMLOPT  = ocamlopt
 OCAMLFIND = ocamlfind
 INCLUDES = -I $(SRC_DIR) -I $(TST_DIR)
-OCAMLTOPFLAGS = $(INCLUDES) -linkpkg -package ounit2
+OCAMLTOPFLAGS = $(INCLUDES) -linkpkg -package ounit2,base,yojson,core
 SRC_DIR  = src
 TST_DIR  = test
 SRC_NAME = \
+		   one_transition.ml\
+		   transitions.ml\
+		   read_json.ml\
 		   main.ml
 TST_NAME = \
 		   test.ml
