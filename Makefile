@@ -9,7 +9,6 @@ LDLIBS   = -lft
 INC_NAME =
 SRC_DIR  = src
 SRC_NAME = \
-		   print_help.ml\
 		   main.ml
 OBJ_NAME = $(SRC_NAME:.ml=.cmx)
 OBJ_DIR  = src
