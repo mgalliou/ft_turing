@@ -1,13 +1,13 @@
 NAME      = ft_turing
+CHECK     = check
 RM        = rm -rf
 OCAMLOPT  = ocamlopt
 OCAMLFIND = ocamlfind
 INCLUDES = -I $(SRC_DIR) -I $(TST_DIR)
-OCAMLTOPFLAGS = $(INCLUDES) -package ounit2
+OCAMLTOPFLAGS = $(INCLUDES) -linkpkg -package ounit2
 SRC_DIR  = src
 TST_DIR  = test
 SRC_NAME = \
-		   print_help.ml\
 		   main.ml
 TST_NAME = \
 		   test.ml
@@ -32,18 +32,18 @@ $(SRC_DIR)/%.cmx : $(SRC_DIR)/%.ml
 $(TST_DIR)/%.cmx : $(TST_DIR)/%.ml
 	$(OCAMLFIND) $(OCAMLOPT) $(OCAMLTOPFLAGS) -c $< 
 
-check: $(TST_OBJ)
-	$(OCFIND) $(OC) $(OPPFLAGS) $(TST_OBJ) -o check
-	./check
+check: $(OBJ) $(TST_OBJ)
+	$(OCAMLFIND) $(OCAMLOPT) $(OCAMLTOPFLAGS) $(OBJ) $(TST_OBJ) -o $(CHECK)
 
-debug: CPPFLAGS += -g -fsanitize=address
-debug: all
+debug: 
+debug:
 
 clean:
-	$(RM) $(OBJ)
+	$(RM) $(OBJ) $(TST_OBJ)
 
 fclean: clean
 	$(RM) $(NAME)
+	$(RM) $(CHECK)
 
 re: fclean all
 

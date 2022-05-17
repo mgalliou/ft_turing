@@ -1,5 +1,7 @@
 */*.cmx
 */*.cmi
 */*.o
+*/*.log
+*/*.cache
 ft_turing
 check
