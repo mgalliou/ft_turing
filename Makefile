@@ -9,11 +9,10 @@ SRC_DIR  = src
 TST_DIR  = test
 OBJ_DIR  = obj
 SRC_NAME = \
-		   one_transition.ml\
-		   transitions.ml\
+		   types.ml\
+		   get_args.ml\
 		   read_json.ml\
 		   run_machine.ml\
-		   get_args.ml\
 		   main.ml
 TST_NAME = \
 		   test.ml

@@ -1,31 +1,36 @@
 open Core
-open Read_json
+open Types
 
-let get_one_transition_string one_transition name =
-    let str = "(" ^ name ^ ", " ^ one_transition#read ^ ") -> ("
-    ^ one_transition#to_state ^ ", "
-    ^ one_transition#write ^ ", "
-    ^ one_transition#action ^ ")" in
-    str
+let get_transition_string transition state_name =
+    String.concat [
+        "("; state_name; ", ";
+        transition.read; ") -> (";
+        transition.to_state; ", ";
+        transition.write; ", ";
+        transition.action; ")"
+    ]
 
-let get_list_transition_string transitions =
-    let transition_list = String.concat ~sep:"\n" (List.map transitions#transition_list ~f:(fun one -> get_one_transition_string one transitions#name)) in
-    transition_list
+let get_list_state_string (state : state) =
+    let map_function transition =
+        get_transition_string transition state.name in
+    String.concat ~sep:"\n" (List.map state.transitions ~f:map_function)
 
 let get_transitions_string transitions =
-    let str = String.concat ~sep:"" (List.map transitions ~f:(fun transi -> get_list_transition_string transi)) in
-    str
+    let map_function state =
+        get_list_state_string state in
+    String.concat ~sep:"\n" (List.map transitions ~f:map_function)
 
-let get_machine_string machine =
-    let machine_string =
-        "name: " ^ machine.name
-        ^ "\nalphabet: [ " ^ String.concat ~sep:", " machine.alphabet ^ " ]"
-        ^ "\nblank: " ^ machine.blank
-        ^ "\nstates: [ " ^ String.concat ~sep:", " machine.states ^ " ]"
-        ^ "\ninitial: " ^ machine.initial
-        ^ "\nfinals: [ " ^ String.concat ~sep:", " machine.finals ^ " ]"
-        ^ (get_transitions_string machine.transitions) in
-        machine_string
+let get_machine_string  machine =
+    let machine_string = String.concat [
+        "name: "; machine.name;
+        "\nalphabet: [ "; (String.concat ~sep:", " machine.alphabet); " ]";
+        "\nblank: "; machine.blank;
+        "\nstates: [ "; (String.concat ~sep:", " machine.states_names); " ]";
+        "\ninitial: "; machine.initial;
+        "\nfinals: [ "; (String.concat ~sep:", " machine.finals); " ]\n";
+        get_transitions_string machine.all_transitions
+    ] in
+    machine_string
 
 let check_tape tape alphabet =
     true

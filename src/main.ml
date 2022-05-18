@@ -1,8 +1,7 @@
 (*parse arguments *)
 open Core
+open Types
 open Read_json
-open Transitions
-open One_transition
 open Run_machine
 open Get_args
 (*let run_machine(machine, tape)*)
