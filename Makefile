@@ -3,14 +3,16 @@ CHECK     = check
 RM        = rm -rf
 OCAMLOPT  = ocamlopt
 OCAMLFIND = ocamlfind
-INCLUDES = -I $(SRC_DIR) -I $(TST_DIR)
+INCLUDES = -I $(SRC_DIR) -I $(TST_DIR) -I $(OBJ_DIR)
 OCAMLTOPFLAGS = $(INCLUDES) -linkpkg -package ounit2,base,yojson,core
 SRC_DIR  = src
 TST_DIR  = test
+OBJ_DIR  = obj
 SRC_NAME = \
 		   one_transition.ml\
 		   transitions.ml\
 		   read_json.ml\
+		   get_args.ml\
 		   main.ml
 TST_NAME = \
 		   test.ml
@@ -21,28 +23,31 @@ INC      = $(addprefix $(SRC_DIR)/,$(INC_NAME))
 LIB      = 
 SRC      = $(addprefix $(SRC_DIR)/,$(SRC_NAME))
 TST      = $(addprefix $(TST_DIR)/,$(TST_NAME))
-OBJ      = $(addprefix $(SRC_DIR)/,$(OBJ_NAME))
-TST_OBJ  = $(addprefix $(TST_DIR)/,$(TST_OBJ_NAME))
+OBJ      = $(addprefix $(OBJ_DIR)/,$(OBJ_NAME))
+TST_OBJ  = $(addprefix $(OBJ_DIR)/,$(TST_OBJ_NAME))
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
 	$(OCAMLFIND) $(OCAMLOPT) $(OCAMLTOPFLAGS) $(OBJ) -o $(NAME)
 
-$(SRC_DIR)/%.cmx : $(SRC_DIR)/%.ml
-	$(OCAMLFIND) $(OCAMLOPT) $(OCAMLTOPFLAGS) -c $< 
+$(OBJ_DIR)/%.cmx : $(SRC_DIR)/%.ml
+	mkdir -p $(dir $@)
+	$(OCAMLFIND) $(OCAMLOPT) $(OCAMLTOPFLAGS) -c $< -o $@
 
-$(TST_DIR)/%.cmx : $(TST_DIR)/%.ml
-	$(OCAMLFIND) $(OCAMLOPT) $(OCAMLTOPFLAGS) -c $< 
+$(OBJ_DIR)/%.cmx : $(TST_DIR)/%.ml
+	mkdir -p $(dir $@)
+	$(OCAMLFIND) $(OCAMLOPT) $(OCAMLTOPFLAGS) -c $< -o $@
 
 check: $(OBJ) $(TST_OBJ)
-	$(OCAMLFIND) $(OCAMLOPT) $(OCAMLTOPFLAGS) $(OBJ) $(TST_OBJ) -o $(CHECK)
+	$(OCAMLFIND) $(OCAMLOPT) $(OCAMLTOPFLAGS) $(subst $(OBJ_DIR)/main.cmx, ,$(OBJ)) $(TST_OBJ) -o $(CHECK)
+	./$(CHECK)
 
 debug: 
 debug:
 
 clean:
-	$(RM) $(OBJ) $(TST_OBJ)
+	$(RM) $(OBJ_DIR)
 
 fclean: clean
 	$(RM) $(NAME)

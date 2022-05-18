@@ -1,5 +1,5 @@
 open OUnit2
-open Main
+open Get_args
 
 let with_no_args _ =
     let valid = check_args(None, None) in 
