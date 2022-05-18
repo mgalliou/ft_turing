@@ -28,7 +28,7 @@ let get_machine_string  machine =
         "\nstates: [ "; (String.concat ~sep:", " machine.states_names); " ]";
         "\ninitial: "; machine.initial;
         "\nfinals: [ "; (String.concat ~sep:", " machine.finals); " ]\n";
-        get_transitions_string machine.all_transitions
+        get_transitions_string machine.transitions
     ] in
     machine_string
 
@@ -36,11 +36,11 @@ let check_machine machine =
     (*check "blank" is in alphabet*)
     List.mem machine.alphabet machine.blank ~equal:(String.equal)
     (*check "initial" is in states*)
-    && List.mem machine.states machine.initial ~equal:(String.equal)
+    && List.mem machine.states_names machine.initial ~equal:(String.equal)
     (*check "finals" are in states*)
-    && List.for_all machine.finals ~f:(fun s -> List.mem machine.states s  ~equal:(String.equal))
+    && List.for_all machine.finals ~f:(fun s -> List.mem machine.states_names s  ~equal:(String.equal))
     (*check transitions.states are in "states"*)
-    && List.for_all machine.transitions ~f:(fun state -> List.mem machine.states state.name ~equal:(String.equal))
+    && List.for_all machine.transitions ~f:(fun state -> List.mem machine.states_names state.name ~equal:(String.equal))
     (*check transitions.states.transition.read is in "alphabet"*)
     (*check transitions.states.transition.to_state is in "states"*)
     (*check transitions.states.transition.write is in "alphabet"*)
@@ -48,9 +48,9 @@ let check_machine machine =
     && List.for_all machine.transitions ~f:(
         fun state -> List.for_all state.transitions ~f:(
             fun trans -> List.mem machine.alphabet trans.read ~equal:(String.equal)
-            && trans -> List.mem machine.states trans.to_state ~equal:(String.equal)
-            && trans -> List.mem machine.alphabet trans.write ~equal:(String.equal)
-            && trans -> List.mem ["LEFT", "RIGHT"].alphabet trans.write ~equal:(String.equal)
+            && List.mem machine.states_names trans.to_state ~equal:(String.equal)
+            && List.mem machine.alphabet trans.write ~equal:(String.equal)
+            && List.mem ["LEFT"; "RIGHT"] trans.action ~equal:(String.equal)
         )
     )
 
@@ -67,5 +67,5 @@ let run_machine machine tape =
     if check_tape tape machine.alphabet && check_machine machine then
         print_string (get_machine_string machine)
     else
-        run_machine machine tape
+        ()
 

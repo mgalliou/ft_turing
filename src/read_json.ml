@@ -44,6 +44,6 @@ let read_json file_name =
         states_names = states_names;
         initial = json |> member "initial" |> to_string;
         finals = finals;
-        all_transitions = transitions
+        transitions = transitions
     }
     (*List.iter all_transitions ~f:(fun one -> List.iter one#transition_list ~f:(fun two -> Core.printf "%s" two#read))*)

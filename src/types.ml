@@ -19,5 +19,5 @@ type machine = {
     states_names : string list;
     initial : string;
     finals : string list;
-    all_transitions : state list
+    transitions : state list
 }
