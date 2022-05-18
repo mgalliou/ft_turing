@@ -32,14 +32,40 @@ let get_machine_string  machine =
     ] in
     machine_string
 
+let check_machine machine =
+    (*check "blank" is in alphabet*)
+    List.mem machine.alphabet machine.blank ~equal:(String.equal)
+    (*check "initial" is in states*)
+    && List.mem machine.states machine.initial ~equal:(String.equal)
+    (*check "finals" are in states*)
+    && List.for_all machine.finals ~f:(fun s -> List.mem machine.states s  ~equal:(String.equal))
+    (*check transitions.states are in "states"*)
+    && List.for_all machine.transitions ~f:(fun state -> List.mem machine.states state.name ~equal:(String.equal))
+    (*check transitions.states.transition.read is in "alphabet"*)
+    (*check transitions.states.transition.to_state is in "states"*)
+    (*check transitions.states.transition.write is in "alphabet"*)
+    (*check transitions.states.transition.action is "LEFT" or "RIGHT"*)
+    && List.for_all machine.transitions ~f:(
+        fun state -> List.for_all state.transitions ~f:(
+            fun trans -> List.mem machine.alphabet trans.read ~equal:(String.equal)
+            && trans -> List.mem machine.states trans.to_state ~equal:(String.equal)
+            && trans -> List.mem machine.alphabet trans.write ~equal:(String.equal)
+            && trans -> List.mem ["LEFT", "RIGHT"].alphabet trans.write ~equal:(String.equal)
+        )
+    )
+
 let check_tape tape alphabet =
-    true
+    let char_in_str_lst c lst = List.mem alphabet (c |> Char.to_string) ~equal:(String.equal) in
+    String.for_all tape ~f:(fun c -> char_in_str_lst c tape)
+
 
 let next_state tape index transition =
     (* return new_tape to_state *)
     true
 
 let run_machine machine tape =
-    print_string (get_machine_string machine);
-    check_tape tape machine.alphabet;
-    true
+    if check_tape tape machine.alphabet && check_machine machine then
+        print_string (get_machine_string machine)
+    else
+        run_machine machine tape
+
