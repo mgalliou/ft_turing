@@ -1,4 +1,4 @@
-open Base
+open Core
 
 class one_transition read to_state write action = object(self)
 

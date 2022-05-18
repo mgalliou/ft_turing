@@ -1,4 +1,4 @@
-open Base
+open Core
 open One_transition
 
 class transitions name transition_list = object(self)

@@ -1,5 +1,7 @@
+open Core
+
 let check_args (machine, tape) =
-    if None = machine || None = tape then
+    if Option.is_none machine || Option.is_none tape then
         false
     else
         true
@@ -18,4 +20,4 @@ let get_args () =
     ] in
     let anon_fun filename = input_strs := filename :: !input_strs in
     let () = Arg.parse speclist anon_fun usage_msg in
-    (List.nth_opt !input_strs 1, List.nth_opt !input_strs 0)
+    (List.nth !input_strs 1, List.nth !input_strs 0)
