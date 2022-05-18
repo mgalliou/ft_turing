@@ -1,12 +1,12 @@
-*/*.annot
-*/*.cmxs
-*/*.cmxa
-*/*.cma
-*/*.cmi
-*/*.a
-*/*.o
-*/*.log
-*/oUnit*
+*.annot
+*.cmxs
+*.cmxa
+*.cma
+*.cmi
+*.a
+*.o
+*.log
+oUnit*
 ft_turing
 check
 
