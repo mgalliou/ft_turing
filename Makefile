@@ -12,6 +12,7 @@ SRC_NAME = \
 		   one_transition.ml\
 		   transitions.ml\
 		   read_json.ml\
+		   run_machine.ml\
 		   get_args.ml\
 		   main.ml
 TST_NAME = \
