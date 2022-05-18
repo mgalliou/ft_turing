@@ -1,19 +1,15 @@
-*.annot
-*.cmo
-*.cma
-*.cmi
-*.a
-*.o
-*.cmx
-*.cmxs
-*.cmxa
+*/*.annot
+*/*.cmxs
+*/*.cmxa
+*/*.cma
+*/*.cmi
+*/*.a
+*/*.o
+*/*.log
+*/oUnit*
+ft_turing
+check
 
 # Merlin configuring file for Vim and Emacs
 .merlin
-*/*.cmx
-*/*.cmi
-*/*.o
-*/*.log
-*/*.cache
-ft_turing
-check
+
