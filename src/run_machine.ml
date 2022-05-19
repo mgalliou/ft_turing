@@ -1,6 +1,7 @@
 open Core
 open Types
 
+
 let get_transition_string transition state_name =
     String.concat [
         "("; state_name; ", ";
@@ -38,25 +39,27 @@ let check_machine machine =
     (*check "initial" is in states*)
     && List.mem machine.states_names machine.initial ~equal:(String.equal)
     (*check "finals" are in states*)
-    && List.for_all machine.finals ~f:(fun s -> List.mem machine.states_names s  ~equal:(String.equal))
+    && List.for_all machine.finals ~f:(
+        fun s -> List.mem machine.states_names s  ~equal:(String.equal))
     (*check transitions.states are in "states"*)
-    && List.for_all machine.transitions ~f:(fun state -> List.mem machine.states_names state.name ~equal:(String.equal))
-    (*check transitions.states.transition.read is in "alphabet"*)
-    (*check transitions.states.transition.to_state is in "states"*)
-    (*check transitions.states.transition.write is in "alphabet"*)
-    (*check transitions.states.transition.action is "LEFT" or "RIGHT"*)
     && List.for_all machine.transitions ~f:(
-        fun state -> List.for_all state.transitions ~f:(
+        fun state -> List.mem machine.states_names state.name ~equal:(String.equal) 
+        && List.for_all state.transitions ~f:(
+            (*check transitions.states.transition.read is in "alphabet"*)
             fun trans -> List.mem machine.alphabet trans.read ~equal:(String.equal)
-            && List.mem machine.states_names trans.to_state ~equal:(String.equal)
-            && List.mem machine.alphabet trans.write ~equal:(String.equal)
-            && List.mem ["LEFT"; "RIGHT"] trans.action ~equal:(String.equal)
+            (*check transitions.states.transition.to_state is in "states"*)
+        && List.mem machine.states_names trans.to_state ~equal:(String.equal)
+        (*check transitions.states.transition.write is in "alphabet"*)
+        && List.mem machine.alphabet trans.write ~equal:(String.equal)
+        (*check transitions.states.transition.action is "LEFT" or "RIGHT"*)
+        && List.mem ["LEFT"; "RIGHT"] trans.action ~equal:(String.equal)
         )
     )
 
 let check_tape tape alphabet =
-    let char_in_str_lst c lst = List.mem alphabet (c |> Char.to_string) ~equal:(String.equal) in
-    String.for_all tape ~f:(fun c -> char_in_str_lst c tape)
+    String.for_all tape ~f:(
+        fun c ->  List.mem alphabet (c |> Char.to_string) ~equal:(String.equal)
+        )
 
 
 let next_state tape index transition =

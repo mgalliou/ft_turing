@@ -1,5 +1,9 @@
 open OUnit2
+open Suite_check_machine
+open Types
 open Get_args
+open Run_machine
+open Read_json
 
 let with_no_args _ =
     let valid = check_args(None, None) in 
@@ -25,6 +29,8 @@ let check_args_suite =
     "with_both_args" >:: with_both_args;
   ]
 
+
 let () = 
-    run_test_tt_main check_args_suite
+    run_test_tt_main check_args_suite;
+    run_test_tt_main check_machine_suite
 

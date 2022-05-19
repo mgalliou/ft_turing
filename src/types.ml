@@ -21,3 +21,7 @@ type machine = {
     finals : string list;
     transitions : state list
 }
+
+(*
+exception Invalid_machine of string
+*)
