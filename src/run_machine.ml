@@ -80,9 +80,29 @@ let check_tape tape alphabet =
         fun c ->  List.mem alphabet (c |> Char.to_string) ~equal:(String.equal)
         )
 
-let next_state tape index transition =
-    (* return new_tape to_state *)
-    true
+
+(*let next_state tape index (state : state) =
+    let get_transition = List.find state.transitions ~f:(
+            fun a -> String.equal a.read (tape.[index] |> Char.to_string)
+        ) in
+    if is_none get_transition then
+        ("" "" 0)
+    else
+        let transition = Option.value get_transition in
+        let new_tape = String.mapi tape ~f:(
+            fun i c -> if i = index then
+                transition.write.[0]
+    else
+        c
+        ) in
+            let new_index =
+                if transition.action ="RIGHT" then
+                    index + 1
+                else
+                    index -1
+            in
+    (new_tape transition.to_state new_index)
+*)
 
 let run_machine machine tape =
     if check_tape tape machine.alphabet && check_machine machine then
