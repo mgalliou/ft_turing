@@ -11,7 +11,7 @@ let with_valid_params _ =
         states_names = ["scanright"; "eraseone"; "subone"; "skip"; "HALT"];
         initial = "scanright";
         finals = ["HALT"];
-        transitions = [{ 
+        transitions = [{
             name = "scanright";
             transitions = [
                 { read = "."; to_state = "scanright"; write = "."; action = "RIGHT"} ;
@@ -19,19 +19,19 @@ let with_valid_params _ =
                 { read = "-"; to_state = "scanright"; write = "-"; action = "RIGHT"};
                 { read = "="; to_state = "eraseone" ; write = "."; action = "LEFT" }
         ]};
-        { 
+        {
             name = "eraseone";
             transitions = [
                 { read = "1"; to_state = "subone"; write = "="; action = "LEFT"};
                 { read = "-"; to_state = "HALT" ; write = "."; action = "LEFT"}
             ]};
-        { 
+        {
             name = "subone";
             transitions = [
                 { read = "1"; to_state = "subone"; write = "1"; action = "LEFT"};
                 { read = "-"; to_state = "skip" ; write = "-"; action = "LEFT"}
             ]};
-        { 
+        {
             name = "skip";
             transitions = [
                 { read = "."; to_state = "skip" ; write = "."; action = "LEFT"};
@@ -47,7 +47,7 @@ let with_blank_not_in_alphabet _ =
         states_names = ["scanright"; "eraseone"; "subone"; "skip"; "HALT"];
         initial = "scanright";
         finals = ["HALT"];
-        transitions = [{ 
+        transitions = [{
             name = "scanrigh";
             transitions = [
                 { read = "."; to_state = "scanright"; write = "."; action = "RIGHT"} ;
@@ -56,25 +56,25 @@ let with_blank_not_in_alphabet _ =
                 { read = "-"; to_state = "scanright"; write = "-"; action = "RIGHT"};
                 { read = "="; to_state = "eraseone" ; write = "."; action = "LEFT" }
         ]};
-        { 
+        {
             name = "eraseone";
             transitions = [
                 { read = "1"; to_state = "subone"; write = "="; action = "LEFT"};
                 { read = "-"; to_state = "HALT" ; write = "."; action = "LEFT"}
             ]};
-        { 
+        {
             name = "subone";
             transitions = [
                 { read = "1"; to_state = "subone"; write = "1"; action = "LEFT"};
                 { read = "-"; to_state = "skip" ; write = "-"; action = "LEFT"}
             ]};
-        { 
+        {
             name = "skip";
             transitions = [
                 { read = "."; to_state = "skip" ; write = "."; action = "LEFT"};
                 { read = "1"; to_state = "scanright"; write = "."; action = "RIGHT"}
             ]}]} in
-    assert_equal false (check_machine machine)
+    assert_raises (Invalid_machine err_blank_not_in_alphabet) (fun () -> check_machine machine)
 
 let with_inital_not_in_states_names _ =
     let machine = {
@@ -84,7 +84,7 @@ let with_inital_not_in_states_names _ =
         states_names = ["scanright"; "eraseone"; "subone"; "skip"; "HALT"];
         initial = "scanup";
         finals = ["HALT"];
-        transitions = [{ 
+        transitions = [{
             name = "scanrigh";
             transitions = [
                 { read = "."; to_state = "scanright"; write = "."; action = "RIGHT"} ;
@@ -93,25 +93,25 @@ let with_inital_not_in_states_names _ =
                 { read = "-"; to_state = "scanright"; write = "-"; action = "RIGHT"};
                 { read = "="; to_state = "eraseone" ; write = "."; action = "LEFT" }
         ]};
-        { 
+        {
             name = "eraseone";
             transitions = [
                 { read = "1"; to_state = "subone"; write = "="; action = "LEFT"};
                 { read = "-"; to_state = "HALT" ; write = "."; action = "LEFT"}
             ]};
-        { 
+        {
             name = "subone";
             transitions = [
                 { read = "1"; to_state = "subone"; write = "1"; action = "LEFT"};
                 { read = "-"; to_state = "skip" ; write = "-"; action = "LEFT"}
             ]};
-        { 
+        {
             name = "skip";
             transitions = [
                 { read = "."; to_state = "skip" ; write = "."; action = "LEFT"};
                 { read = "1"; to_state = "scanright"; write = "."; action = "RIGHT"}
             ]}]} in
-    assert_equal false (check_machine machine)
+    assert_raises (Invalid_machine err_initial_state_not_in_states) (fun () -> check_machine machine)
 
 let with_finals_not_in_states_names _ =
     let machine = {
@@ -121,7 +121,7 @@ let with_finals_not_in_states_names _ =
         states_names = ["scanright"; "eraseone"; "subone"; "skip"; "HALT"];
         initial = "scanright";
         finals = ["STOP"];
-        transitions = [{ 
+        transitions = [{
             name = "scanrigh";
             transitions = [
                 { read = "."; to_state = "scanright"; write = "."; action = "RIGHT"} ;
@@ -130,25 +130,25 @@ let with_finals_not_in_states_names _ =
                 { read = "-"; to_state = "scanright"; write = "-"; action = "RIGHT"};
                 { read = "="; to_state = "eraseone" ; write = "."; action = "LEFT" }
         ]};
-        { 
+        {
             name = "eraseone";
             transitions = [
                 { read = "1"; to_state = "subone"; write = "="; action = "LEFT"};
                 { read = "-"; to_state = "HALT" ; write = "."; action = "LEFT"}
             ]};
-        { 
+        {
             name = "subone";
             transitions = [
                 { read = "1"; to_state = "subone"; write = "1"; action = "LEFT"};
                 { read = "-"; to_state = "skip" ; write = "-"; action = "LEFT"}
             ]};
-        { 
+        {
             name = "skip";
             transitions = [
                 { read = "."; to_state = "skip" ; write = "."; action = "LEFT"};
                 { read = "1"; to_state = "scanright"; write = "."; action = "RIGHT"}
             ]}]} in
-    assert_equal false (check_machine machine)
+    assert_raises (Invalid_machine err_finals_state_not_in_states) (fun () -> check_machine machine)
 
 let with_transition_state_name_not_in_state_name _ =
     let machine = {
@@ -156,9 +156,9 @@ let with_transition_state_name_not_in_state_name _ =
         alphabet = ["1"; "."; "-"; "="];
         blank = ".";
         states_names = ["scanright"; "eraseone"; "subone"; "skip"; "HALT"];
-        initial = "scanrigh";
+        initial = "scanright";
         finals = ["HALT"];
-        transitions = [{ 
+        transitions = [{
             name = "scanrigh";
             transitions = [
                 { read = "."; to_state = "scanright"; write = "."; action = "RIGHT"} ;
@@ -167,25 +167,25 @@ let with_transition_state_name_not_in_state_name _ =
                 { read = "-"; to_state = "scanright"; write = "-"; action = "RIGHT"};
                 { read = "="; to_state = "eraseone" ; write = "."; action = "LEFT" }
         ]};
-        { 
+        {
             name = "eraseone";
             transitions = [
                 { read = "1"; to_state = "subone"; write = "="; action = "LEFT"};
                 { read = "-"; to_state = "HALT" ; write = "."; action = "LEFT"}
             ]};
-        { 
+        {
             name = "scanup";
             transitions = [
                 { read = "1"; to_state = "subone"; write = "1"; action = "LEFT"};
                 { read = "-"; to_state = "skip" ; write = "-"; action = "LEFT"}
             ]};
-        { 
+        {
             name = "skip";
             transitions = [
                 { read = "."; to_state = "skip" ; write = "."; action = "LEFT"};
                 { read = "1"; to_state = "scanright"; write = "."; action = "RIGHT"}
             ]}]} in
-    assert_equal false (check_machine machine)
+    assert_raises (Invalid_machine err_state_name_not_in_states) (fun () -> check_machine machine)
 
 let with_read_not_in_alphabet _ =
     let machine = {
@@ -195,7 +195,7 @@ let with_read_not_in_alphabet _ =
         states_names = ["scanright"; "eraseone"; "subone"; "skip"; "HALT"];
         initial = "scanright";
         finals = ["HALT"];
-        transitions = [{ 
+        transitions = [{
             name = "scanright";
             transitions = [
                 { read = "."; to_state = "scanright"; write = "."; action = "RIGHT"} ;
@@ -203,25 +203,25 @@ let with_read_not_in_alphabet _ =
                 { read = "-"; to_state = "scanright"; write = "-"; action = "RIGHT"};
                 { read = "="; to_state = "eraseone" ; write = "."; action = "LEFT" }
         ]};
-        { 
+        {
             name = "eraseone";
             transitions = [
                 { read = "1"; to_state = "subone"; write = "="; action = "LEFT"};
                 { read = "-"; to_state = "HALT" ; write = "."; action = "LEFT"}
             ]};
-        { 
+        {
             name = "subone";
             transitions = [
                 { read = "A"; to_state = "subone"; write = "1"; action = "LEFT"};
                 { read = "-"; to_state = "skip" ; write = "-"; action = "LEFT"}
             ]};
-        { 
+        {
             name = "skip";
             transitions = [
                 { read = "."; to_state = "skip" ; write = "."; action = "LEFT"};
                 { read = "1"; to_state = "scanright"; write = "."; action = "RIGHT"}
             ]}]} in
-    assert_equal false (check_machine machine)
+    assert_raises (Invalid_machine_state (err_read_not_in_alphabet, "A")) (fun () -> check_machine machine)
 
 let with_to_state_not_in_state_name _ =
     let machine = {
@@ -231,7 +231,7 @@ let with_to_state_not_in_state_name _ =
         states_names = ["scanright"; "eraseone"; "subone"; "skip"; "HALT"];
         initial = "scanright";
         finals = ["HALT"];
-        transitions = [{ 
+        transitions = [{
             name = "scanright";
             transitions = [
                 { read = "."; to_state = "scanright"; write = "."; action = "RIGHT"} ;
@@ -239,25 +239,25 @@ let with_to_state_not_in_state_name _ =
                 { read = "-"; to_state = "scanright"; write = "-"; action = "RIGHT"};
                 { read = "="; to_state = "eraseone" ; write = "."; action = "LEFT" }
         ]};
-        { 
+        {
             name = "eraseone";
             transitions = [
                 { read = "1"; to_state = "subone"; write = "="; action = "LEFT"};
                 { read = "-"; to_state = "HALT" ; write = "."; action = "LEFT"}
             ]};
-        { 
+        {
             name = "subone";
             transitions = [
                 { read = "1"; to_state = "subone"; write = "1"; action = "LEFT"};
                 { read = "-"; to_state = "skip" ; write = "-"; action = "LEFT"}
             ]};
-        { 
+        {
             name = "skip";
             transitions = [
                 { read = "."; to_state = "skip" ; write = "."; action = "LEFT"};
                 { read = "1"; to_state = "scanup"; write = "."; action = "RIGHT"}
             ]}]} in
-    assert_equal false (check_machine machine)
+    assert_raises (Invalid_machine_state (err_to_state_not_in_alphabet, "scanup")) (fun () -> check_machine machine)
 
 let with_write_not_in_alphabet _ =
     let machine = {
@@ -267,7 +267,7 @@ let with_write_not_in_alphabet _ =
         states_names = ["scanright"; "eraseone"; "subone"; "skip"; "HALT"];
         initial = "scanright";
         finals = ["HALT"];
-        transitions = [{ 
+        transitions = [{
             name = "scanright";
             transitions = [
                 { read = "."; to_state = "scanright"; write = "."; action = "RIGHT"} ;
@@ -275,25 +275,25 @@ let with_write_not_in_alphabet _ =
                 { read = "-"; to_state = "scanright"; write = "-"; action = "RIGHT"};
                 { read = "="; to_state = "eraseone" ; write = "."; action = "LEFT" }
         ]};
-        { 
+        {
             name = "eraseone";
             transitions = [
                 { read = "1"; to_state = "subone"; write = "="; action = "LEFT"};
                 { read = "-"; to_state = "HALT" ; write = "."; action = "LEFT"}
             ]};
-        { 
+        {
             name = "subone";
             transitions = [
                 { read = "1"; to_state = "subone"; write = "A"; action = "LEFT"};
                 { read = "-"; to_state = "skip" ; write = "-"; action = "LEFT"}
             ]};
-        { 
+        {
             name = "skip";
             transitions = [
                 { read = "."; to_state = "skip" ; write = "."; action = "LEFT"};
                 { read = "1"; to_state = "scanright"; write = "."; action = "RIGHT"}
             ]}]} in
-    assert_equal false (check_machine machine)
+    assert_raises (Invalid_machine_state (err_write_not_in_alphabet, "A")) (fun () -> check_machine machine)
 
 let with_action_not_left_or_right _ =
     let machine = {
@@ -303,7 +303,7 @@ let with_action_not_left_or_right _ =
         states_names = ["scanright"; "eraseone"; "subone"; "skip"; "HALT"];
         initial = "scanright";
         finals = ["HALT"];
-        transitions = [{ 
+        transitions = [{
             name = "scanright";
             transitions = [
                 { read = "."; to_state = "scanright"; write = "."; action = "RIGHT"} ;
@@ -311,25 +311,25 @@ let with_action_not_left_or_right _ =
                 { read = "-"; to_state = "scanright"; write = "-"; action = "UP"};
                 { read = "="; to_state = "eraseone" ; write = "."; action = "LEFT" }
         ]};
-        { 
+        {
             name = "eraseone";
             transitions = [
                 { read = "1"; to_state = "subone"; write = "="; action = "LEFT"};
                 { read = "-"; to_state = "HALT" ; write = "."; action = "LEFT"}
             ]};
-        { 
+        {
             name = "subone";
             transitions = [
                 { read = "1"; to_state = "subone"; write = "1"; action = "LEFT"};
                 { read = "-"; to_state = "skip" ; write = "-"; action = "LEFT"}
             ]};
-        { 
+        {
             name = "skip";
             transitions = [
                 { read = "."; to_state = "skip" ; write = "."; action = "LEFT"};
                 { read = "1"; to_state = "scanright"; write = "."; action = "RIGHT"}
             ]}]} in
-    assert_equal false (check_machine machine)
+    assert_raises (Invalid_machine_state (err_action_not_left_or_right, "UP")) (fun () -> check_machine machine)
 
 let check_machine_suite =
     "check_machine_suite" >::: [
