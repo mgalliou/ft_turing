@@ -187,6 +187,43 @@ let with_transition_state_name_not_in_state_name _ =
             ]}]} in
     assert_raises (Invalid_machine err_state_name_not_in_states) (fun () -> check_machine machine)
 
+let with_duplicate_read _ =
+    let machine = {
+        name = "test_machine";
+        alphabet = ["1"; "."; "-"; "="];
+        blank = ".";
+        states_names = ["scanright"; "eraseone"; "subone"; "skip"; "HALT"];
+        initial = "scanright";
+        finals = ["HALT"];
+        transitions = [{
+            name = "scanright";
+            transitions = [
+                { read = "."; to_state = "scanright"; write = "."; action = "RIGHT"} ;
+                { read = "1"; to_state = "scanright"; write = "1"; action = "RIGHT"};
+                { read = "-"; to_state = "scanright"; write = "-"; action = "RIGHT"};
+                { read = "="; to_state = "eraseone" ; write = "."; action = "LEFT" };
+                { read = "1"; to_state = "scanright"; write = "1"; action = "RIGHT"}
+        ]};
+        {
+            name = "eraseone";
+            transitions = [
+                { read = "1"; to_state = "subone"; write = "="; action = "LEFT"};
+                { read = "-"; to_state = "HALT" ; write = "."; action = "LEFT"}
+            ]};
+        {
+            name = "subone";
+            transitions = [
+                { read = "1"; to_state = "subone"; write = "1"; action = "LEFT"};
+                { read = "-"; to_state = "skip" ; write = "-"; action = "LEFT"}
+            ]};
+        {
+            name = "skip";
+            transitions = [
+                { read = "."; to_state = "skip" ; write = "."; action = "LEFT"};
+                { read = "1"; to_state = "scanright"; write = "."; action = "RIGHT"}
+            ]}]} in
+    assert_raises (Invalid_machine_state (err_read_duplicate, "scanright")) (fun () -> check_machine machine)
+
 let with_read_not_in_alphabet _ =
     let machine = {
         name = "test_machine";
@@ -338,6 +375,7 @@ let check_machine_suite =
         "with_inital_not_in_states_names" >:: with_inital_not_in_states_names;
         "with_finals_not_in_states_names" >:: with_finals_not_in_states_names;
         "with_transition_state_name_not_in_state_name" >:: with_transition_state_name_not_in_state_name;
+        "with_duplicate_read" >:: with_duplicate_read;
         "with_read_not_in_alphabet" >:: with_read_not_in_alphabet;
         "with_to_state_not_in_state_name" >:: with_to_state_not_in_state_name;
         "with_write_not_in_alphabet" >:: with_write_not_in_alphabet;

@@ -48,5 +48,5 @@ let read_json file_name =
 let get_json file_name =
     try read_json file_name with e ->
         let msg = Exn.to_string e in
-        Printf.eprintf "there was an error: %s\n" msg ;
+        Printf.eprintf "there was an error: %s : %s\n" msg file_name;
         exit 0

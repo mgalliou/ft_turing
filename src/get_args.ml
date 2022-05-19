@@ -20,4 +20,6 @@ let get_args () =
     ] in
     let anon_fun filename = input_strs := filename :: !input_strs in
     let () = Arg.parse speclist anon_fun usage_msg in
+    if !help then
+        raise (Arg.Help (Arg.usage_string speclist usage_msg));
     (List.nth !input_strs 1, List.nth !input_strs 0)
