@@ -9,7 +9,7 @@ open Get_args
 let main () =
     let (machine_file, tape) = get_args () in
     let valid_arg = check_args(machine_file, tape) in
-    let machine = read_json (Option.value machine_file ~default:"") in
+    let machine = get_json(Option.value machine_file ~default:"") in
     run_machine machine (Option.value tape ~default:"");
     ()
 
