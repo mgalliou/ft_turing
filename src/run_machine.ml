@@ -80,33 +80,56 @@ let check_tape tape alphabet =
         fun c ->  List.mem alphabet (c |> Char.to_string) ~equal:(String.equal)
         )
 
+let get_state machine state_name =
+    match List.find machine.transitions ~f:(
+            fun a -> String.equal a.name state_name
+        )
+        with
+        | Some state -> state
+        | None -> {name="";transitions=[]}
 
-(*let next_state tape index (state : state) =
-    let get_transition = List.find state.transitions ~f:(
-            fun a -> String.equal a.read (tape.[index] |> Char.to_string)
-        ) in
-    if is_none get_transition then
-        ("" "" 0)
-    else
-        let transition = Option.value get_transition in
-        let new_tape = String.mapi tape ~f:(
-            fun i c -> if i = index then
+let get_transition (state : state) c =
+    match List.find state.transitions ~f:(
+        fun a -> String.equal a.read (c |> Char.to_string)
+    )
+    with
+    | Some transition -> transition
+    | None -> {read= "";to_state="";write="";action=""}
+
+let next_state tape index state_name machine =
+    let state = get_state machine state_name in
+    let transition = get_transition state tape.[index] in
+    let new_tape = String.mapi tape ~f:(
+        fun i c ->
+            if i = index then
                 transition.write.[0]
+            else
+                c
+        )
+    in
+    let new_index =
+        if String.equal transition.action "RIGHT" then
+                index + 1
+            else
+                index -1
+    in
+    (new_tape, new_index, transition)
+
+
+let rec loop_machine (tape, index, transition, machine) =
+    if List.mem machine.finals transition.to_state ~equal:(String.equal) then
+        ()
     else
-        c
-        ) in
-            let new_index =
-                if transition.action ="RIGHT" then
-                    index + 1
-                else
-                    index -1
-            in
-    (new_tape transition.to_state new_index)
-*)
+        let (new_tape, new_index, new_transition) = next_state tape index transition.to_state machine in
+        print_string (get_transition_string transition transition.to_state);
+        print_string "\n";
+        loop_machine (new_tape, new_index, new_transition, machine)
 
 let run_machine machine tape =
     if check_tape tape machine.alphabet && check_machine machine then
-        print_string (get_machine_string machine)
+        let transition = get_transition (get_state machine machine.initial) tape.[0] in
+        print_string (get_machine_string machine);
+        loop_machine (tape, 0, transition, machine)
     else
         ()
 
