@@ -1,38 +1,10 @@
 open Core
 open Types
 open Check_machine
+open Print_machine
 
-
-let get_transition_string transition state_name =
-    String.concat [
-        "("; state_name; ", ";
-        transition.read; ") -> (";
-        transition.to_state; ", ";
-        transition.write; ", ";
-        transition.action; ")\n"
-    ]
-
-let get_list_state_string (state : state) =
-    let map_function transition =
-        get_transition_string transition state.name in
-    String.concat ~sep:"" (List.map state.transitions ~f:map_function)
-
-let get_transitions_string transitions =
-    let map_function state =
-        get_list_state_string state in
-    String.concat ~sep:"" (List.map transitions ~f:map_function)
-
-let get_machine_string  machine =
-    let machine_string = String.concat [
-        "name: "; machine.name;
-        "\nalphabet: [ "; (String.concat ~sep:", " machine.alphabet); " ]";
-        "\nblank: "; machine.blank;
-        "\nstates: [ "; (String.concat ~sep:", " machine.states_names); " ]";
-        "\ninitial: "; machine.initial;
-        "\nfinals: [ "; (String.concat ~sep:", " machine.finals); " ]\n";
-        get_transitions_string machine.transitions
-    ] in
-    machine_string
+let err_state_not_in_machine_definition = "\"state\" not in machine definition"
+let err_no_transition_in_state_with_read = "no \"transtition\" in state with matching \"read\""
 
 let get_state machine state_name =
     match List.find machine.transitions ~f:(
@@ -40,7 +12,7 @@ let get_state machine state_name =
         )
         with
         | Some state -> state
-        | None -> {name="";transitions=[]}
+        | None -> raise (Bad_instruction (err_state_not_in_machine_definition, state_name))
 
 let get_transition (state : state) c =
     match List.find state.transitions ~f:(
@@ -48,7 +20,7 @@ let get_transition (state : state) c =
     )
     with
     | Some transition -> transition
-    | None -> {read= "";to_state="";write="";action=""}
+    | None -> raise (Bad_instruction (err_no_transition_in_state_with_read, (c |> Char.to_string) ^ " in " ^ state.name))
 
 let next_state tape index state_name machine =
     let state = get_state machine state_name in

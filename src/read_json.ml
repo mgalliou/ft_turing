@@ -2,46 +2,59 @@ open Core
 open Yojson
 open Types
 
+let err_invalid_field_in_json = "\"field\" invalid in json"
 
-let check_json (name, alphabet, blank, states, initial, finals, transitions) =
-    true
+let get_member_string json field_name =
+    let open Yojson.Basic.Util in
+    try json |> member field_name |> to_string with
+    | Type_error (msg,yojson) -> raise (Invalid_json (err_invalid_field_in_json ^ " for " ^ field_name ))
+
+let get_member_list json field_name =
+    let open Yojson.Basic.Util in
+    let field = try json |> member field_name with
+        | Type_error (msg,yojson) -> raise (Invalid_json (err_invalid_field_in_json ^ " for " ^ field_name ))
+    in
+    try field |> to_list with
+    | Type_error (test, i) -> []
+
 
 let rec filter_list all = function
-  | [] -> []
-  | h :: t -> if List.mem all h ~equal:(=) then h :: filter_list all t else filter_list all t
+    | [] -> []
+    | h :: t -> if List.mem all h ~equal:(=) then h :: filter_list all t else filter_list all t
 
 
 let get_transitions state_name transitions =
     let open Yojson.Basic.Util in
-    let map_transitions2 tmp = {
-        read = tmp |> member "read" |>  to_string;
-        to_state = tmp |> member "to_state" |> to_string;
-        write = tmp |> member "write" |> to_string;
-        action = tmp |> member "action" |> to_string
+    let map_transitions tmp = {
+        read = get_member_string tmp "read";
+        to_state = get_member_string tmp "to_state";
+        write = get_member_string tmp "write";
+        action = get_member_string tmp "action";
     } in
-    let state_list = try transitions |> member state_name |> to_list with
-          | Yojson.Basic.Util.Type_error (test, i) -> []
-    in
-    let state_transitions = List.map state_list ~f:map_transitions2 in
+    let state_list = get_member_list transitions state_name in
+    let state_transitions = List.map state_list ~f:map_transitions in
     {
         name = state_name;
         transitions = state_transitions
     }
 
 let read_json file_name =
-    let json = Yojson.Basic.from_file file_name in
+    let json = try Yojson.Basic.from_file file_name with
+        | Sys_error str -> raise (Invalid_json str)
+    in
     let open Yojson.Basic.Util in
-    let finals = List.map (json |> member "finals" |> to_list) ~f:(to_string) in
-    let states_names = List.map (json |> member "states" |> to_list) ~f:(to_string) in
-    let map_transitions state = 
-        get_transitions state (json |> member "transitions") in
+    let finals = List.map (get_member_list json "finals") ~f:(to_string) in
+    let states_names = List.map (get_member_list json "states") ~f:(to_string) in
+    let map_transitions state = try get_transitions state (json |> member "transitions") with
+        | Type_error (msg,yojson) -> raise (Invalid_json (err_invalid_field_in_json ^ " for " ^ "transitions" ))
+    in
     let transitions = List.map states_names ~f:map_transitions in
     {
-        name = json |> member "name" |> to_string;
-        alphabet = List.map (json |> member "alphabet" |> to_list) ~f:(to_string);
-        blank = json |> member "blank" |> to_string;
+        name = get_member_string json "name";
+        alphabet = List.map (get_member_list json "alphabet") ~f:(to_string);
+        blank = get_member_string json "blank";
         states_names = states_names;
-        initial = json |> member "initial" |> to_string;
+        initial = get_member_string json "initial";
         finals = finals;
         transitions = transitions
     }

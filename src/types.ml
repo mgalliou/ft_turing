@@ -25,4 +25,5 @@ type machine = {
 
 exception Invalid_machine of string
 exception Invalid_machine_state of string * string
-
+exception Bad_instruction of string * string
+exception Invalid_json of string

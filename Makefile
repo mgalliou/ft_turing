@@ -12,12 +12,14 @@ SRC_NAME = \
 		   types.ml\
 		   get_args.ml\
 		   read_json.ml\
+		   print_machine.ml\
 		   check_machine.ml\
 		   run_machine.ml\
 		   main.ml
 TST_NAME = \
            suite_check_machine.ml\
 		   suite_check_args.ml\
+		   suite_read_json.ml\
 		   test.ml
 OBJ_NAME = $(SRC_NAME:.ml=.cmx)
 TST_OBJ_NAME = $(TST_NAME:.ml=.cmx)
