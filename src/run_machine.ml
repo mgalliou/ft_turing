@@ -48,14 +48,14 @@ let print_tape tape i blank =
         ^ "<" ^ String.slice tape i (i + 1) ^ ">" ^ String.slice tape (i + 1) 0
     ^ (String.make (max_len - String.length tape) (String.get blank 0)) ^ "]")
 
-let rec loop_machine (tape, index, transition, machine) =
+let rec loop_machine (tape, index, transition, machine, state_name) =
     if List.mem machine.finals transition.to_state ~equal:(String.equal) then
         ()
     else
         let (new_tape, new_index, new_transition) = next_state tape index transition.to_state machine in
         print_tape tape index machine.blank;
-        print_string (get_transition_string transition transition.to_state);
-        loop_machine (new_tape, new_index, new_transition, machine)
+        print_string (get_transition_string new_transition state_name);
+        loop_machine (new_tape, new_index, new_transition, machine, new_transition.to_state)
 
 let check_tape tape alphabet =
     if not (String.for_all tape ~f:(fun c ->  List.mem alphabet (c |> Char.to_string) ~equal:(String.equal))) then
@@ -68,7 +68,7 @@ let run_machine machine tape =
         let transition = get_transition (get_state machine machine.initial) tape.[0] in
         print_string (get_machine_string machine);
         print_string "********************************************************\n";
-        loop_machine (tape, 0, transition, machine)
+        loop_machine (tape, 0, transition, machine, machine.initial)
     else
         ()
 
