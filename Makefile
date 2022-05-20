@@ -12,6 +12,7 @@ SRC_NAME = \
 		   types.ml\
 		   get_args.ml\
 		   read_json.ml\
+		   check_machine.ml\
 		   run_machine.ml\
 		   main.ml
 TST_NAME = \
