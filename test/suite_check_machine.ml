@@ -2,7 +2,7 @@ open OUnit2
 open Types
 open Check_machine
 
-(*let machine = read_json "machine/test/test.json" in*)
+
 let with_valid_params _ =
     let machine = {
         name = "test_machine";

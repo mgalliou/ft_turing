@@ -4,6 +4,7 @@ open Get_args
 open Read_json
 open Run_machine
 
+
 let main () =
     try
         let (machine_file, tape) = get_args () in

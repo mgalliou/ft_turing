@@ -1,5 +1,6 @@
 open Core
 
+
 let check_args (machine, tape) =
     if Option.is_none machine || Option.is_none tape then
         false
