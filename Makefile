@@ -17,6 +17,7 @@ SRC_NAME = \
 		   main.ml
 TST_NAME = \
            suite_check_machine.ml\
+		   suite_check_args.ml\
 		   test.ml
 OBJ_NAME = $(SRC_NAME:.ml=.cmx)
 TST_OBJ_NAME = $(TST_NAME:.ml=.cmx)

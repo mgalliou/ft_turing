@@ -13,7 +13,7 @@ let rec filter_list all = function
 
 let get_transitions state_name transitions =
     let open Yojson.Basic.Util in
-    let map_transitions tmp = {
+    let map_transitions2 tmp = {
         read = tmp |> member "read" |>  to_string;
         to_state = tmp |> member "to_state" |> to_string;
         write = tmp |> member "write" |> to_string;
@@ -22,7 +22,7 @@ let get_transitions state_name transitions =
     let state_list = try transitions |> member state_name |> to_list with
           | Yojson.Basic.Util.Type_error (test, i) -> []
     in
-    let state_transitions = List.map state_list ~f:map_transitions in
+    let state_transitions = List.map state_list ~f:map_transitions2 in
     {
         name = state_name;
         transitions = state_transitions
@@ -33,7 +33,8 @@ let read_json file_name =
     let open Yojson.Basic.Util in
     let finals = List.map (json |> member "finals" |> to_list) ~f:(to_string) in
     let states_names = List.map (json |> member "states" |> to_list) ~f:(to_string) in
-    let map_transitions state = get_transitions state (json |> member "transitions") in
+    let map_transitions state = 
+        get_transitions state (json |> member "transitions") in
     let transitions = List.map states_names ~f:map_transitions in
     {
         name = json |> member "name" |> to_string;

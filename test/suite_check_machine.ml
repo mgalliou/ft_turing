@@ -410,8 +410,8 @@ let with_action_not_left_or_right _ =
             ]}]} in
     assert_raises (Invalid_machine_state (err_action_not_left_or_right, "UP")) (fun () -> check_machine machine)
 
-let check_machine_suite =
-    "check_machine_suite" >::: [
+let tests =
+    "suite_check_machine" >::: [
         "with_valid_params" >:: with_valid_params;
         "with_blank_not_in_alphabet" >:: with_blank_not_in_alphabet;
         "with_inital_not_in_states_names" >:: with_inital_not_in_states_names;
