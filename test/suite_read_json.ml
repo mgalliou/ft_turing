@@ -4,7 +4,7 @@ open Read_json
 
 let with_valid_json _ =
     let file_name = "machine/test/test.json" in
-    read_json file_name;
+    let _ = read_json file_name in
     assert_equal true true
 
 let with_no_field_name _ =

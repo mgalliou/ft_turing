@@ -5,6 +5,7 @@ open Print_machine
 
 let err_state_not_in_machine_definition = "\"state\" not in machine definition"
 let err_no_transition_in_state_with_read = "no \"transtition\" in state with matching \"read\""
+let err_bad_action = "Bad action"
 
 let get_state machine state_name =
     match List.find machine.transitions ~f:(
@@ -25,19 +26,16 @@ let get_transition (state : state) c =
 let next_state tape index state_name machine =
     let state = get_state machine state_name in
     let transition = get_transition state tape.[index] in
-    let new_tape = String.mapi tape ~f:(
-        fun i c ->
-            if i = index then
-                transition.write.[0]
-            else
-                c
-        )
+    let new_tape = String.substr_replace_first ~pos:index tape ~pattern:transition.read ~with_:transition.write ^
+    if index = String.length tape - 1 && String.equal transition.action "RIGHT" then
+        machine.blank
+    else
+       ""
     in
-    let new_index =
-        if String.equal transition.action "RIGHT" then
-                index + 1
-            else
-                index -1
+    let new_index = match transition.action with
+    | "RIGHT" -> index + 1
+    | "LEFT" -> index - 1
+    | _ -> raise (Bad_instruction (err_bad_action ,  " in " ^ state.name))
     in
     (new_tape, new_index, transition)
 
