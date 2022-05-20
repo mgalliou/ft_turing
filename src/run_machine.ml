@@ -41,6 +41,14 @@ let next_state tape index state_name machine =
 
 let print_tape tape i blank =
     let max_len = 20 in
+    if String.length tape > max_len then
+        let i_left = if i < max_len / 2 then 0 else i - (max_len / 2) in
+        let i_right = if i < max_len / 2 then max_len else i + (max_len / 2) in
+    print_string (
+        "[" ^ (if i = 0 then "" else String.slice tape i_left i)
+        ^ "<" ^ String.slice tape i (i + 1) ^ ">" ^ String.slice tape (i + 1) i_right
+    ^ (String.make (if i_right > String.length tape then 0 else max_len - i_right +String.length tape)  (String.get blank 0)) ^ "]")
+    else
     print_string (
         "[" ^ (if i = 0 then "" else String.slice tape 0 i)
         ^ "<" ^ String.slice tape i (i + 1) ^ ">" ^ String.slice tape (i + 1) 0
