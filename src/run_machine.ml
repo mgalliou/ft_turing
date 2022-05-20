@@ -41,19 +41,24 @@ let next_state tape index state_name machine =
     in
     (new_tape, new_index, transition)
 
+let print_tape tape i =
+    print_string (
+        "[" ^ (if i = 0 then "" else String.slice tape 0 i)
+        ^ "<" ^ String.slice tape i (i + 1) ^ ">" ^ String.slice tape (i + 1) 0
+    ^ ".........]")
 
 let rec loop_machine (tape, index, transition, machine) =
     if List.mem machine.finals transition.to_state ~equal:(String.equal) then
         ()
     else
         let (new_tape, new_index, new_transition) = next_state tape index transition.to_state machine in
+        print_tape tape index;
         print_string (get_transition_string transition transition.to_state);
-        print_string "\n";
         loop_machine (new_tape, new_index, new_transition, machine)
 
 let check_tape tape alphabet =
     if not (String.for_all tape ~f:(fun c ->  List.mem alphabet (c |> Char.to_string) ~equal:(String.equal))) then
-        raise (Invalid_machine "ft_turing: error: tape contains charathers not present in alphabet")
+        raise (Invalid_machine "ft_turing: error: tape contains charaters not present in alphabet")
     else
         true
 
@@ -61,6 +66,7 @@ let run_machine machine tape =
     if check_tape tape machine.alphabet && check_machine machine then
         let transition = get_transition (get_state machine machine.initial) tape.[0] in
         print_string (get_machine_string machine);
+        print_string "********************************************************\n";
         loop_machine (tape, 0, transition, machine)
     else
         ()
