@@ -1,10 +1,12 @@
 open Core
 open Types
 
+
 let err_blank_not_in_alphabet = "\"blank\" not in \"alphabet\""
 let err_initial_state_not_in_states = "\"inital\" state not in \"states\""
 let err_finals_state_not_in_states = "\"finals\" state not in \"states\""
 let err_state_name_not_in_states = "\"state.name\" not in \"states\""
+let err_state_duplicate = "duplicate \"read\" in \"state\""
 let err_read_duplicate = "duplicate \"read\" in \"state\""
 let err_read_not_in_alphabet = "\"read\" not in \"alphabet\""
 let err_to_state_not_in_alphabet = "\"to_state\" not in \"alphabet\""
@@ -12,7 +14,9 @@ let err_write_not_in_alphabet = "\"to_state\" not in \"alphabet\""
 let err_action_not_left_or_right = "\"to_state\" not in \"alphabet\""
 
 let check_state (state : state) machine =
-    if not (List.mem machine.states_names state.name ~equal:(String.equal)) then
+    if 1 < List.count machine.transitions ~f:(fun t -> String.equal state.name t.name) then
+        raise (Invalid_machine_state (err_state_duplicate, state.name))
+    else if not (List.mem machine.states_names state.name ~equal:(String.equal)) then
         raise (Invalid_machine err_state_name_not_in_states)
     else List.for_all state.transitions ~f:(fun trans -> 
         (*check transitions.states.transition.read is in "alphabet"*)

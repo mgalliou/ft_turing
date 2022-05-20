@@ -9,18 +9,18 @@ let get_transition_string transition state_name =
         transition.read; ") -> (";
         transition.to_state; ", ";
         transition.write; ", ";
-        transition.action; ")"
+        transition.action; ")\n"
     ]
 
 let get_list_state_string (state : state) =
     let map_function transition =
         get_transition_string transition state.name in
-    String.concat ~sep:"\n" (List.map state.transitions ~f:map_function)
+    String.concat ~sep:"" (List.map state.transitions ~f:map_function)
 
 let get_transitions_string transitions =
     let map_function state =
         get_list_state_string state in
-    String.concat ~sep:"\n" (List.map transitions ~f:map_function)
+    String.concat ~sep:"" (List.map transitions ~f:map_function)
 
 let get_machine_string  machine =
     let machine_string = String.concat [
