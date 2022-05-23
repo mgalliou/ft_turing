@@ -1,0 +1,72 @@
+{
+	"name" : "utm",
+	"alphabet": ["N", "A", "B", "S"],
+	"blank" : "_",
+	"states" : ["init", "", "", "HALT"],
+	"initial" : "init",
+	"finals" : ["HALT"],
+	"transitions" : {
+		"init": [
+			{ "read" : "*", "to_state": "init", "write": "*", "action": "RIGHT"},
+			{ "read" : "I", "to_state": "get_first_state", "write": "I", "action": "RIGHT"}
+		],
+		"get_first_state": [
+			{ "read" : "*", "to_state": "go_to_tape_<STATE>", "write": "*", "action": "RIGHT"}
+		],
+		"go_to_tape_<STATE>": [
+			{ "read" : "*", "to_state": "go_to_tape_<STATE>", "write": "*", "action": "RIGHT"},
+			{ "read" : "_", "to_state": "init_cursor_<STATE>", "write": "_", "action": "RIGHT"}
+		],
+		"init_cursor_<STATE>": [
+			{ "read" : "*", "to_state": "go_to_finals_<STATE>_<CHAR>", "write": "C", "action": "LEFT"}
+		],
+		"go_to_finals_<STATE>_<CHAR>": [
+			{ "read" : "*", "to_state": "go_to_finals_<STATE>_<CHAR>", "write": "*", "action": "LEFT"},
+			{ "read" : "F", "to_state": "check_finals_<STATE>_<CHAR>", "write": "*", "action": "RIGHT"}
+		],
+		"check_finals_<STATE>_<CHAR>": [
+			{ "read" : "*", "to_state": "HALT", "write": "*", "action": "RIGHT"},
+			{ "read" : "<STATE>", "to_state": "HALT", "write": "<STATE>", "action": "RIGHT"},
+			{ "read" : "T", "to_state": "check_transition_<STATE>_<CHAR>", "write": "T", "action": "RIGHT"}
+		],
+		"check_transition_<STATE>_<CHAR>": [
+			{ "read" : "*", "to_state": "skip_state_def_<STATE>_<CHAR>", "write": "*", "action": "RIGHT"},
+			{ "read" : "<STATE>", "to_state": "get_read_<STATE>_<CHAR>", "write": "<STATE>", "action": "RIGHT"}
+		],
+		"skip_state_def_<STATE>_<CHAR>": [
+			{ "read" : "*", "to_state": "skip_state_def_<STATE>_<CHAR>", "write": "*", "action": "RIGHT"},
+			{ "read" : ";", "to_state": "check_transition_<STATE>_<CHAR>", "write": ";", "action": "RIGHT"}
+
+		],
+		"get_read_<STATE>_<CHAR>": [
+			{ "read" : "*", "to_state": "get_read_<STATE>_<CHAR>", "write": "*", "action": "RIGHT"},
+			{ "read" : "r", "to_state": "check_read_<STATE>_<CHAR>", "write": "r", "action": "RIGHT"}
+		],
+		"check_read_<STATE>_<CHAR>": [
+			{ "read" : "<CHAR>", "to_state": "go_to_to_state_<STATE>_<CHAR>", "write": "r", "action": "RIGHT"},
+			{ "read" : "*", "to_state": "get_read_<STATE>_<CHAR>", "write": "*", "action": "RIGHT"}
+		],
+		"go_to_to_state_<STATE>_<CHAR>": [
+			{ "read" : "t", "to_state": "get_to_state", "write": "t", "action": "RIGHT"}
+		],
+		"get_to_state": [
+			{ "read" : "<TO_STATE>", "to_state": "go_to_write_<TO_STATE>", "write": "<TO_STATE>", "action": "RIGHT"}
+		],
+		"go_to_write_<TO_STATE>": [
+			{ "read" : "w", "to_state": "get_to_write_<TO_STATE>", "write": "w", "action": "RIGHT"}
+		],
+		"get_to_write_<TO_STATE>": [
+			{ "read" : "<WRITE>", "to_state": "go_to_action_<TO_STATE>_<WRITE>", "write": "<WRITE>", "action": "RIGHT"}
+		],
+		"go_to_action_<TO_STATE>_<WRITE>": [
+			{ "read" : "a", "to_state": "get_to_action_<TO_STATE>_<WRITE>", "write": "w", "action": "RIGHT"}
+		],
+		"get_to_action_<TO_STATE>_<WRITE>": [
+			{ "read" : "<ACTION>", "to_state": "go_to_cursor_<TO_STATE>_<WRITE>_<ACTION>", "write": "<ACTION>", "action": "RIGHT"}
+		],
+		"go_to_cursor_<TO_STATE>_<WRITE>_<ACTION>": [
+			{ "read" : "*", "to_state": "go_to_cursor_<TO_STATE>_<WRITE>_<ACTION>", "write": "*", "action": "RIGHT"},
+			{ "read" : "C", "to_state": "init_cursor_<TO_STATE>", "write": "<WRITE>", "action": "<ACTION>"}
+		]
+	}
+}

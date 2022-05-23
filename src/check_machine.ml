@@ -9,7 +9,7 @@ let err_state_name_not_in_states = "\"state.name\" not in \"states\""
 let err_state_duplicate = "duplicate \"state\ in \"transitions\""
 let err_read_duplicate = "duplicate \"read\" in \"state\""
 let err_read_not_in_alphabet = "\"read\" not in \"alphabet\""
-let err_to_state_not_in_alphabet = "\"to_state\" not in \"alphabet\""
+let err_to_state_not_in_alphabet = "\"to_state\" not in \"states\""
 let err_write_not_in_alphabet = "\"write\" not in \"alphabet\""
 let err_action_not_left_or_right = "\"action\" not in lphabet\""
 
