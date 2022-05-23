@@ -1,0 +1,23 @@
+{
+	"name" : "02n",
+	"alphabet": [ "0", "y", "n", "."],
+	"blank" : ".",
+	"states" : ["scanfirst", "check_pair", "check_unpair", "HALT"],
+	"initial" : "scanfirst",
+	"finals" : ["HALT"],
+	"transitions" : {
+		"scanfirst": [
+			{ "read" : "0", "to_state": "check_pair", "write": "0", "action": "RIGHT"},
+			{ "read" : ".", "to_state": "HALT", "write": "n", "action": "RIGHT"}
+		],
+		"check_pair": [
+			{ "read" : "0", "to_state": "check_unpair", "write": "0", "action": "RIGHT"},
+			{ "read" : ".", "to_state": "HALT", "write": "n", "action": "RIGHT"}
+		],
+		"check_unpair": [
+			{ "read" : "0", "to_state": "check_pair", "write": "0", "action": "RIGHT"},
+			{ "read" : ".", "to_state": "HALT", "write": "y", "action": "RIGHT"}
+		]
+
+	}
+}
