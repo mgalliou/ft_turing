@@ -66,7 +66,3 @@ let read_json file_name =
         finals = finals;
         transitions = transitions
     }
-
-let get_json file_name =
-    try read_json file_name with e ->
-        raise e

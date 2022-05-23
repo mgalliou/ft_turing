@@ -40,11 +40,17 @@ let get_new_index action index =
     | _ -> raise (Bad_instruction (err_bad_action ,  " in " ^ action))
 
 let print_tape tape i blank =
-    let max_len = 20 in
-    print_string (
-        "[" ^ (if i = 0 then "" else String.slice tape 0 i)
-        ^ "<" ^ String.slice tape i (i + 1) ^ ">" ^ String.slice tape (i + 1) 0
-    ^ (String.make (max_len - String.length tape) (String.get blank 0)) ^ "]")
+    let min_len = 20 in
+    let padding = if String.length tape <= min_len then
+        min_len - String.length tape
+    else
+        0
+    in
+    let before_cursor = (if i = 0 then "" else String.slice tape 0 i) in
+    let cursor = String.slice tape i (i + 1) in
+    let after_cursor = String.slice tape (i + 1) 0 in
+    printf "[%s<%s>%s%s]" before_cursor cursor after_cursor (String.make padding blank.[0])
+
 
 let rec loop_machine (tape, index, machine, state_name) =
     if not (List.mem machine.finals state_name ~equal:(String.equal)) then
