@@ -13,6 +13,7 @@ SRC_NAME = \
 		   get_args.ml\
 		   read_json.ml\
 		   print_machine.ml\
+		   tape.ml\
 		   check_machine.ml\
 		   run_machine.ml\
 		   main.ml
