@@ -1,7 +1,7 @@
 open Core
 open Yojson
-open Read_json
 open Types
+open Utm_generator
 
 let create_json machine =
     let build_transition transition =
@@ -53,20 +53,12 @@ let get_args () =
     List.nth !input_strs 0
 
 let main () =
-    try
-        let machine_file = get_args () in
         (*let valid_arg = check_args(machine_file, tape) in*)
-        let machine = read_json(Option.value machine_file ~default:"") in
+        let machine = generate_utm () in
         let json = create_json machine in
         let oc = stdout in
         Yojson.Basic.pretty_to_channel oc json;
         output_string oc "\n"
-    with
-    | Arg.Help e -> print_endline e
-    | Invalid_machine e -> print_endline e
-    | Invalid_machine_state (e, v) -> printf "%s : %s" e v
-    | Bad_instruction (msg, error) -> print_endline (msg ^ error)
-    | Invalid_json e -> print_endline e
 
 let () =
     main ();

@@ -16,6 +16,7 @@ SRC_NAME = \
 		   tape.ml\
 		   check_machine.ml\
 		   run_machine.ml\
+		   utm_generator.ml\
 		   main.ml
 TST_NAME = \
            suite_check_machine.ml\

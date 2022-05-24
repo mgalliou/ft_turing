@@ -1,6 +1,6 @@
 {
 	"name" : "utm",
-	"alphabet": ["N", "A", "B", "S"],
+	"alphabet": ["N", "A", "B", "S", "I", "F", "T", "r", "t", "w", "a", "L", "R", "C", "1", "+", ".", ">", "x", "#", ";"],
 	"blank" : "_",
 	"states" : ["init", "", "", "HALT"],
 	"initial" : "init",
@@ -11,13 +11,13 @@
 			{ "read" : "I", "to_state": "get_first_state", "write": "I", "action": "RIGHT"}
 		],
 		"get_first_state": [
-			{ "read" : "*", "to_state": "go_to_tape_<STATE>", "write": "*", "action": "RIGHT"}
+			{ "read" : "<STATE>", "to_state": "go_to_tape_<STATE>", "write": "*", "action": "RIGHT"}
 		],
 		"go_to_tape_<STATE>": [
 			{ "read" : "*", "to_state": "go_to_tape_<STATE>", "write": "*", "action": "RIGHT"},
-			{ "read" : "_", "to_state": "init_cursor_<STATE>", "write": "_", "action": "RIGHT"}
+			{ "read" : "_", "to_state": "set_cursor_<STATE>", "write": "_", "action": "RIGHT"}
 		],
-		"init_cursor_<STATE>": [
+		"set_cursor_<STATE>": [
 			{ "read" : "*", "to_state": "go_to_finals_<STATE>_<CHAR>", "write": "C", "action": "LEFT"}
 		],
 		"go_to_finals_<STATE>_<CHAR>": [
@@ -66,7 +66,7 @@
 		],
 		"go_to_cursor_<TO_STATE>_<WRITE>_<ACTION>": [
 			{ "read" : "*", "to_state": "go_to_cursor_<TO_STATE>_<WRITE>_<ACTION>", "write": "*", "action": "RIGHT"},
-			{ "read" : "C", "to_state": "init_cursor_<TO_STATE>", "write": "<WRITE>", "action": "<ACTION>"}
+			{ "read" : "C", "to_state": "set_cursor_<TO_STATE>", "write": "<WRITE>", "action": "<ACTION>"}
 		]
 	}
 }
