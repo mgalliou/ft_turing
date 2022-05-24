@@ -9,6 +9,7 @@
 oUnit*
 ft_turing
 check
+gen
 obj/
 
 # Merlin configuring file for Vim and Emacs
