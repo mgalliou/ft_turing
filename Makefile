@@ -9,7 +9,6 @@ SRC_DIR  = src
 TST_DIR  = test
 OBJ_DIR  = obj
 GEN_NAME  = \
-		   types.ml\
 		   utm_generator.ml\
 		   write_json.ml
 SRC_NAME = \
@@ -20,7 +19,6 @@ SRC_NAME = \
 		   tape.ml\
 		   check_machine.ml\
 		   run_machine.ml\
-		   utm_generator.ml\
 		   main.ml
 TST_NAME = \
            suite_check_machine.ml\

@@ -31,34 +31,45 @@ let get_alphabet () =
     i_transitions; i_read; i_to_state; i_write; i_action; i_left; i_right; i_cursor;
     i_separator] |> List.append sub_alphabet |> List.append sub_states
 
-(*constants*)
+let new_transition read to_state write action =
+{
+    read = read;
+    to_state = to_state;
+    write = write;
+    action = action
+}
 
-let gen_state_get_first_state machine =
-    List.map sub_states ~f:(fun c -> 
+let gen_states_set_cursor alphabet =
+    List.map sub_states ~f:(fun s ->
         {
-            read = c;
-            to_state = "go_to_tape_" ^ c;
-            write = c;
-            action = action_right;
+           name = "set_cursor_" ^ s;
+           transitions = List.map alphabet ~f:(fun c ->
+               new_transition c ("go_to_finals_" ^ s ^ "_" ^ c) c action_left
+               )
         })
 
-
-let gen_skip_transitions to_state action alphabet =
-    List.map alphabet ~f:(fun c -> 
-        {
-            read = c;
-            to_state = to_state;
-            write = c;
-            action = action;
-        })
-
-let gen_state_go_to_states name target to_state action alphabet =
-    let tmp = [{read = target; to_state = to_state; write = target; action = action_right}]@(gen_skip_transitions name action alphabet) in
+let gen_state_get_first_state =
     {
-        name = name;
-        transitions = tmp
+        name = "get_first_state";
+        transitions = List.map sub_states ~f:(fun c -> 
+            new_transition c ("go_to_tape_" ^ c) c action_right
+        )
     }
 
+let gen_skip_transitions to_state action alphabet =
+    List.map alphabet ~f:(fun c -> new_transition c to_state c action)
+
+let gen_state_go_to_states name target to_state action alphabet =
+    let target_transition = new_transition target to_state target action_right in
+    {
+        name = name;
+        transitions = [target_transition]@(gen_skip_transitions name action alphabet)
+    }
+
+let gen_states alphabet =
+    [gen_state_go_to_states state_initial i_initial "get_first_state" action_right alphabet]
+    @[gen_state_get_first_state]
+    @gen_states_set_cursor alphabet
 
 let generate_utm () =
     let alphabet = get_alphabet () in
@@ -69,9 +80,8 @@ let generate_utm () =
         states_names = [state_initial; state_halt];
         initial = state_initial;
         finals = [state_halt];
-        transitions = [(gen_state_go_to_states state_initial i_initial "get_first_state" action_right alphabet)]
+        transitions = gen_states alphabet
     } in
-    (*List.append machine.transitions (gen_state_get_first_state machine);*)
     machine
 
 
