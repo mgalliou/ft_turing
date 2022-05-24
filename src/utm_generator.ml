@@ -1,6 +1,7 @@
 open Core
 open Types
 
+let blank = "_"
 let state_initial = "init"
 let state_halt = "HALT"
 
@@ -39,6 +40,58 @@ let new_transition read to_state write action =
     action = action
 }
 
+let gen_state_go_to_states name target to_state find_action skip_action =
+    {
+        name = name;
+        transitions = List.map alphabet ~f:(fun c -> 
+            match c with
+            | c when c |> String.(=) target -> new_transition target to_state target find_action
+            | _ -> new_transition c name c skip_action
+        )
+    }
+
+let gen_states_skip_state_def =
+    List.map (List.cartesian_product alphabet sub_states) ~f:(fun (c,s) -> 
+            let name = "skip_state_def_" ^ s ^ "_" ^ c in
+            let to_state = ("check_transition_" ^ s ^ "_" ^ c ) in
+                gen_state_go_to_states name i_separator to_state action_right action_right
+            )
+
+let gen_states_check_transitions =
+    List.map (List.cartesian_product alphabet sub_states) ~f:(fun (c,s) -> 
+            let name = "check_transition_" ^ s ^ "_" ^ c in
+            {
+                name = name; 
+                transitions = List.map alphabet ~f:(fun c ->
+                    match c with
+                    | c when c |> String.(=) s -> new_transition c ("get_read_" ^ s ^ "_" ^ c) c action_right
+                    | _ -> new_transition c ("skip_state_def_" ^ s ^ "_" ^ c) c action_right
+                )
+            }
+        )
+
+let gen_states_check_finals =
+    List.map (List.cartesian_product alphabet sub_states) ~f:(fun (c,s) -> 
+            let name = "check_finals" ^ s ^ "_" ^ c in
+            let to_state = ("check__transition_" ^ s ^ "_" ^ c ) in
+            {
+                name = name; 
+                transitions = List.map alphabet ~f:(fun c ->
+                    match c with
+                    | c when c |> String.(=) i_transitions -> new_transition c to_state c action_right
+                    | c when c |> String.(=) s             -> new_transition c state_halt c action_right
+                    | _ -> new_transition c state_halt c action_right
+                )
+            }
+        )
+
+let gen_states_go_to_finales =
+    List.map (List.cartesian_product alphabet sub_states) ~f:(fun (c,s) -> 
+            let name = "go_to_finals_" ^ s ^ "_" ^ c in
+            let to_state = ("check_finals_" ^ s ^ "_" ^ c ) in
+                gen_state_go_to_states name i_finals to_state action_right action_left
+            )
+
 let gen_states_set_cursor =
     List.map sub_states ~f:(fun s ->
         {
@@ -48,6 +101,12 @@ let gen_states_set_cursor =
                )
         })
 
+let gen_states_go_to_tape =
+    List.map sub_states ~f:(fun s ->
+        gen_state_go_to_states ("go_to_tape_" ^ s) blank ("set_cursor_" ^ s) action_right action_right
+    )
+
+
 let gen_state_get_first_state =
     {
         name = "get_first_state";
@@ -56,26 +115,21 @@ let gen_state_get_first_state =
         )
     }
 
-let gen_skip_transitions to_state action =
-    List.map alphabet ~f:(fun c -> new_transition c to_state c action)
-
-let gen_state_go_to_states name target to_state action =
-    let target_transition = new_transition target to_state target action_right in
-    {
-        name = name;
-        transitions = [target_transition]@(gen_skip_transitions name action)
-    }
 
 let gen_states =
-    [gen_state_go_to_states state_initial i_initial "get_first_state" action_right]
+    [gen_state_go_to_states state_initial i_initial "get_first_state" action_right action_right]
     @[gen_state_get_first_state]
+    @gen_states_go_to_tape
     @gen_states_set_cursor
+    @gen_states_go_to_finales
+    @gen_states_check_finals
+    @gen_states_skip_state_def
 
 let generate_utm () =
     let machine = {
         name = "utm";
         alphabet = alphabet;
-        blank = "_";
+        blank = blank;
         states_names = [state_initial; state_halt];
         initial = state_initial;
         finals = [state_halt];
