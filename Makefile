@@ -8,6 +8,10 @@ OCAMLTOPFLAGS = $(INCLUDES) -linkpkg -package ounit2,base,yojson,core
 SRC_DIR  = src
 TST_DIR  = test
 OBJ_DIR  = obj
+GEN_NAME  = \
+		   types.ml\
+		   utm_generator.ml\
+		   write_json.ml
 SRC_NAME = \
 		   types.ml\
 		   get_args.ml\
@@ -25,13 +29,16 @@ TST_NAME = \
 		   test.ml
 OBJ_NAME = $(SRC_NAME:.ml=.cmx)
 TST_OBJ_NAME = $(TST_NAME:.ml=.cmx)
+GEN_OBJ_NAME = $(GEN_NAME:.ml=.cmx)
 INC_NAME = 
 INC      = $(addprefix $(SRC_DIR)/,$(INC_NAME))
 LIB      = 
 SRC      = $(addprefix $(SRC_DIR)/,$(SRC_NAME))
+GEN      = $(addprefix $(SRC_DIR)/,$(GEN_NAME))
 TST      = $(addprefix $(TST_DIR)/,$(TST_NAME))
 OBJ      = $(addprefix $(OBJ_DIR)/,$(OBJ_NAME))
 TST_OBJ  = $(addprefix $(OBJ_DIR)/,$(TST_OBJ_NAME))
+GEN_OBJ  = $(addprefix $(OBJ_DIR)/,$(GEN_OBJ_NAME))
 
 all: $(NAME)
 
@@ -49,7 +56,9 @@ $(OBJ_DIR)/%.cmx : $(TST_DIR)/%.ml
 check: $(OBJ) $(TST_OBJ)
 	$(OCAMLFIND) $(OCAMLOPT) $(OCAMLTOPFLAGS) $(subst $(OBJ_DIR)/main.cmx, ,$(OBJ)) $(TST_OBJ) -o $(CHECK)
 	./$(CHECK)
-
+gen: $(GEN_OBJ)
+	$(OCAMLFIND) $(OCAMLOPT) $(OCAMLTOPFLAGS) $(GEN_OBJ) -o gen
+	./gen
 debug: 
 debug:
 
