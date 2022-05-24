@@ -25,7 +25,7 @@
 			{ "read" : "F", "to_state": "check_finals_<STATE>_<CHAR>", "write": "*", "action": "RIGHT"}
 		],
 		"check_finals_<STATE>_<CHAR>": [
-			{ "read" : "*", "to_state": "HALT", "write": "*", "action": "RIGHT"},
+			{ "read" : "*", "to_state": "check_finals_<STATE>_<CHAR>", "write": "*", "action": "RIGHT"},
 			{ "read" : "<STATE>", "to_state": "HALT", "write": "<STATE>", "action": "RIGHT"},
 			{ "read" : "T", "to_state": "check_transition_<STATE>_<CHAR>", "write": "T", "action": "RIGHT"}
 		],

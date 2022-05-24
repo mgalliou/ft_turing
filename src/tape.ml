@@ -23,7 +23,8 @@ let print_tape tape i blank =
     printf "[%s<%s>%s%s]" before_cursor cursor after_cursor (String.make padding blank.[0])
 
 let check_tape tape alphabet =
-    if not (String.for_all tape ~f:(fun c ->  List.mem alphabet (c |> Char.to_string) ~equal:(String.equal))) then
-        raise (Invalid_machine "ft_turing: error: tape contains charaters not present in alphabet")
-    else
-        true
+    String.for_all tape ~f:(fun c ->
+        match c with
+        | a when (List.mem alphabet (a |> Char.to_string) ~equal:(String.equal)) -> true
+        | _  -> raise (Invalid_machine ("ft_turing: error: tape contains charaters not present in alphabet: " ^ Char.to_string c))
+        )
