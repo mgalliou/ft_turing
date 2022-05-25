@@ -56,7 +56,7 @@ check: $(OBJ) $(TST_OBJ)
 	./$(CHECK)
 gen: $(GEN_OBJ)
 	$(OCAMLFIND) $(OCAMLOPT) $(OCAMLTOPFLAGS) $(GEN_OBJ) -o gen
-	./gen
+	./gen > machine/utm.json
 debug: 
 debug:
 
