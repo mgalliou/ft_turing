@@ -19,10 +19,16 @@
 		],
 		"set_cursor_<STATE>": [
 			{ "read" : "*", "to_state": "go_to_finals_<STATE>_<CHAR>", "write": "C", "action": "LEFT"}
+			{ "read" : "_", "to_state": "go_to_blank_<STATE>", "write": "C", "action": "LEFT"}
 		],
+		"got_to_blank_<STATE>": [
+			{ "read" : "*", "to_state": "go_to_blank<STATE>", "write": "*", "action": "LEFT"}
+			{ "read" : "B", "to_state": "check_blank<STATE>", "write": "B", "action": "RIGHT"}
+		]
+
 		"go_to_finals_<STATE>_<CHAR>": [
 			{ "read" : "*", "to_state": "go_to_finals_<STATE>_<CHAR>", "write": "*", "action": "LEFT"},
-			{ "read" : "F", "to_state": "check_finals_<STATE>_<CHAR>", "write": "*", "action": "RIGHT"}
+			{ "read" : "F", "to_state": "check_finals_<STATE>_<CHAR>", "write": "F", "action": "RIGHT"}
 		],
 		"check_finals_<STATE>_<CHAR>": [
 			{ "read" : "*", "to_state": "check_finals_<STATE>_<CHAR>", "write": "*", "action": "RIGHT"},
