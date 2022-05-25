@@ -40,11 +40,11 @@ let rec loop_machine (tape, index, machine, state_name) =
             raise (Bad_instruction (err_bad_action ,  " \"LEFT\" when index is 0 " ));
         let new_tape = write_to_tape index transition.read transition.write tape in
         let new_tape = longer_tape new_tape index machine.blank in
-        print_tape tape index machine.blank ;
+        print_string (get_tape_string tape index machine.blank);
         print_string (get_transition_string transition state_name);
         loop_machine (new_tape, new_index, machine, transition.to_state)
     else
-        print_tape tape index machine.blank
+        print_endline (get_tape_string tape index machine.blank)
 
 let run_machine (machine: machine) tape =
     if check_tape tape machine.alphabet && check_machine machine then

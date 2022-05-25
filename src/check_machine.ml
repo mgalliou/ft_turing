@@ -6,12 +6,12 @@ let err_blank_not_in_alphabet = "\"blank\" not in \"alphabet\""
 let err_initial_state_not_in_states = "\"inital\" state not in \"states\""
 let err_finals_state_not_in_states = "\"finals\" state not in \"states\""
 let err_state_name_not_in_states = "\"state.name\" not in \"states\""
-let err_state_duplicate = "duplicate \"state\ in \"transitions\""
+let err_state_duplicate = "duplicate \"state\" in \"transitions\""
 let err_read_duplicate = "duplicate \"read\" in \"state\""
 let err_read_not_in_alphabet = "\"read\" not in \"alphabet\""
 let err_to_state_not_in_alphabet = "\"to_state\" not in \"states\""
 let err_write_not_in_alphabet = "\"write\" not in \"alphabet\""
-let err_action_not_left_or_right = "\"action\" not in lphabet\""
+let err_action_not_left_or_right = "\"action\" not \"LEFT\" or \"RIGHT\""
 
 let check_state (state : state) machine =
     if 1 < List.count machine.transitions ~f:(fun t -> String.equal state.name t.name) then
