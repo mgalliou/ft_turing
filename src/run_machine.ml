@@ -39,8 +39,8 @@ let rec loop_machine (tape, index, machine, state_name) =
         let new_index = get_new_index transition.action index in
         if new_index < 0 then
             raise (Bad_instruction (err_bad_action ,  " \"LEFT\" when index is 0 " ));
+        print_string (get_tape_string new_tape index machine.blank);
         let new_tape = write_to_tape index transition.read transition.write new_tape in
-        print_string (get_tape_string tape index machine.blank);
         print_string (get_transition_string transition state_name);
         loop_machine (new_tape, new_index, machine, transition.to_state)
     else

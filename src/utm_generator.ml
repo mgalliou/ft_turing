@@ -1,7 +1,7 @@
 open Core
 open Types
 
-let blank = "."
+let blank = "_"
 let state_initial = "init"
 let state_halt = "HALT"
 
@@ -26,12 +26,12 @@ let i_left = "L"
 let i_right = "R"
 let i_cursor = "C"
 let i_separator = ";"
-let tape_delimitor = "_"
+let tape_delimitor = "|"
 
 let alphabet =
     [i_name; i_alphabet; i_blank; i_states; i_initial; i_finals;
     i_transitions; i_read; i_to_state; i_write; i_action; i_left; i_right; i_cursor;
-    i_separator; tape_delimitor] |> List.append sub_alphabet |> List.append sub_states
+    i_separator; blank; tape_delimitor] |> List.append sub_alphabet |> List.append sub_states
 
 let new_transition read to_state write action =
 {
@@ -44,9 +44,10 @@ let new_transition read to_state write action =
 let gen_state_go_to_states name target to_state find_action skip_action =
     {
         name = name;
-        transitions = List.map alphabet ~f:(fun c -> 
+        transitions = List.map alphabet ~f:(fun c ->
             match c with
-            | c when c |> String.(=) target -> new_transition target to_state target find_action
+            | c when c |> String.(=) target -> new_transition c to_state c find_action
+            | c when c |> String.(=) blank -> new_transition c state_halt c find_action
             | _ -> new_transition c name c skip_action
         )
     }
@@ -101,7 +102,7 @@ let gen_states_go_to_cursor =
            name = name;
            transitions = List.map alphabet ~f:(fun d ->
                match d with
-               | "C" -> new_transition d ("set_cursor_" ^ s) c (if String.equal a i_right then action_right else action_left)
+               | d when d |> String.equal i_cursor -> new_transition d ("set_cursor_" ^ s) c (if String.equal a i_right then action_right else action_left)
                | _ -> new_transition d name d action_right
                )
         })
@@ -121,7 +122,7 @@ let gen_states_go_to_action =
     List.map all_pairs ~f:(fun (s, c) ->
         {
            name = "go_to_action_" ^ s ^ "_" ^ c;
-           transitions = [new_transition "a" ("get_to_action_" ^ s ^ "_" ^ c ) "a" action_right]
+           transitions = [new_transition i_action ("get_to_action_" ^ s ^ "_" ^ c ) i_action action_right]
         })
 
 let gen_states_get_to_write =
@@ -137,7 +138,7 @@ let gen_states_go_to_write =
     List.map sub_states ~f:(fun s ->
         {
            name = "go_to_write_" ^ s;
-           transitions = [new_transition "w" ("get_to_write_" ^ s) "w" action_right]
+           transitions = [new_transition i_write ("get_to_write_" ^ s) i_write action_right]
         })
 
 let gen_states_get_to_state=
@@ -152,7 +153,7 @@ let gen_states_go_to_state =
     List.map all_pairs ~f:(fun (s, c) ->
         {
            name = "go_to_state_" ^ s ^ "_" ^ c;
-           transitions = [new_transition "t" ("get_to_state") "t" action_right]
+           transitions = [new_transition i_to_state ("get_to_state") i_to_state action_right]
         })
 
 let gen_states_check_read =
@@ -174,7 +175,7 @@ let gen_states_get_read =
            name = "get_read_" ^ s ^ "_" ^ c;
            transitions = List.map alphabet ~f:(fun a ->
                match a with
-               | "r" -> new_transition a ("check_read_" ^ s ^ "_" ^ c) a action_right
+               | a when a |> String.equal i_read -> new_transition a ("check_read_" ^ s ^ "_" ^ c) a action_right
                | _ -> new_transition a ("get_read_" ^ s ^ "_" ^ c) a action_right
            )
         })
@@ -184,7 +185,30 @@ let gen_states_set_cursor =
         {
            name = "set_cursor_" ^ s;
            transitions = List.map alphabet ~f:(fun c ->
-               new_transition c ("go_to_finals_" ^ s ^ "_" ^ c) i_cursor action_left
+               match c with
+               | c when String.equal c blank -> new_transition blank ("go_to_blank_" ^ s) i_cursor action_left
+               | c when List.mem sub_alphabet c ~equal:String.equal -> new_transition c ("go_to_finals_" ^ s ^ "_" ^ c) i_cursor action_left
+               | _ -> new_transition c state_halt c action_right
+               )
+        })
+
+let gen_states_go_to_blank =
+    List.map sub_states ~f:(fun s ->
+        {
+           name = "go_to_blank_" ^ s;
+           transitions = List.map alphabet ~f:(fun c ->
+               match c with
+               | c when c |> String.equal i_blank  -> new_transition i_blank ("get_blank_" ^ s) i_blank action_right
+               | _ -> new_transition c ("go_to_blank_" ^ s) c action_left
+               )
+        })
+
+let gen_states_get_blank=
+    List.map sub_states ~f:(fun s ->
+        {
+           name = "get_blank_" ^ s;
+           transitions = List.map alphabet ~f:(fun c ->
+               new_transition c ("go_to_finals_" ^ s ^ "_" ^ c) c action_left
                )
         })
 
@@ -202,12 +226,26 @@ let gen_state_get_first_state =
         )
     }
 
+let gen_state_init =
+        let name = "init" in
+        {
+           name = name;
+           transitions = List.map alphabet ~f:(fun d ->
+               match d with
+               | "I" -> new_transition d ("get_first_state") d action_right
+               | d when String.equal d blank -> new_transition d state_halt d action_right
+               | _ -> new_transition d name d action_right
+               )
+        }
+
 
 let gen_states =
-    [gen_state_go_to_states state_initial i_initial "get_first_state" action_right action_right]
+    [gen_state_init]
     @[gen_state_get_first_state]
     @gen_states_go_to_tape
     @gen_states_set_cursor
+    @gen_states_go_to_blank
+    @gen_states_get_blank
     @gen_states_go_to_finales
     @gen_states_check_finals
     @gen_states_check_transition
