@@ -4,9 +4,9 @@ open Types
 let write_to_tape index read write tape =
     String.substr_replace_first ~pos:index tape ~pattern:read ~with_:write
 
-let longer_tape tape index blank =
-    if index = String.length tape -1 then
-        tape ^ blank
+let rec longer_tape tape index blank =
+    if index >= String.length tape -1 then
+            longer_tape (tape ^ blank) index blank
     else
         tape
 
