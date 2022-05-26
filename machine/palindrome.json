@@ -24,11 +24,13 @@
 		],
 		"find_1": [
 			{ "read": "1", "to_state": "gotostart", "write": ".", "action": "LEFT" },
-			{ "read": "0", "to_state": "HALT", "write": "n", "action": "RIGHT" }
+			{ "read": "0", "to_state": "HALT", "write": "n", "action": "RIGHT" },
+			{ "read": ".", "to_state": "HALT", "write": "y", "action": "RIGHT" }
 		],
 		"find_0": [
 			{ "read": "0", "to_state": "gotostart", "write": ".", "action": "LEFT" },
-			{ "read": "1", "to_state": "HALT", "write": "n", "action": "RIGHT" }
+			{ "read": "1", "to_state": "HALT", "write": "n", "action": "RIGHT" },
+			{ "read": ".", "to_state": "HALT", "write": "y", "action": "RIGHT" }
 		],
 		"gotostart": [
 			{ "read": "1", "to_state": "gotostart", "write": "1", "action": "LEFT" },

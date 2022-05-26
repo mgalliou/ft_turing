@@ -81,7 +81,19 @@ let gen_states_check_finals =
                 transitions = List.map alphabet ~f:(fun d ->
                     match d with
                     | d when d |> String.equal i_transitions -> new_transition d to_state d action_right
-                    | d when d |> String.equal s             -> new_transition d state_halt d action_right
+                    | d when d |> String.equal s             -> new_transition d ("set_cursor_final_" ^ c) d action_right
+                    | _ -> new_transition d name d action_right
+                )
+            }
+        )
+let gen_states_set_cursor_final =
+    List.map alphabet ~f:(fun c -> 
+            let name = "set_cursor_final_" ^ c in
+            {
+                name = name;
+                transitions = List.map alphabet ~f:(fun d ->
+                    match d with
+                    | d when d |> String.equal i_cursor -> new_transition d state_halt c action_right
                     | _ -> new_transition d name d action_right
                 )
             }
@@ -248,6 +260,7 @@ let gen_states =
     @gen_states_get_blank
     @gen_states_go_to_finales
     @gen_states_check_finals
+    @gen_states_set_cursor_final
     @gen_states_check_transition
     @gen_states_skip_state_def
     @gen_states_go_to_cursor

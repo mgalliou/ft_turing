@@ -4,7 +4,13 @@ RM        = rm -rf
 OCAMLOPT  = ocamlopt
 OCAMLFIND = ocamlfind
 INCLUDES = -I $(SRC_DIR) -I $(TST_DIR) -I $(OBJ_DIR)
-OCAMLTOPFLAGS = $(INCLUDES) -linkpkg -package ounit2,base,yojson,core
+OCAMLTOPFLAGS = $(INCLUDES) -linkpkg -package ounit2,yojson,core
+LIB_DIR  = $(OPAM_SWITCH_PREFIX)/lib/
+BIN_DIR  = $(OPAM_SWITCH_PREFIX)/bin/
+LIB_NAME = core\
+		   yojson\
+		   ounit2
+BIN_NAME = ocamlfind
 SRC_DIR  = src
 TST_DIR  = test
 OBJ_DIR  = obj
@@ -28,9 +34,8 @@ TST_NAME = \
 OBJ_NAME = $(SRC_NAME:.ml=.cmx)
 TST_OBJ_NAME = $(TST_NAME:.ml=.cmx)
 GEN_OBJ_NAME = $(GEN_NAME:.ml=.cmx)
-INC_NAME = 
-INC      = $(addprefix $(SRC_DIR)/,$(INC_NAME))
-LIB      = 
+LIB      = $(addprefix $(LIB_DIR)/,$(LIB_NAME))
+BIN      = $(addprefix $(BIN_DIR)/,$(BIN_NAME))
 SRC      = $(addprefix $(SRC_DIR)/,$(SRC_NAME))
 GEN      = $(addprefix $(SRC_DIR)/,$(GEN_NAME))
 TST      = $(addprefix $(TST_DIR)/,$(TST_NAME))
@@ -40,7 +45,7 @@ GEN_OBJ  = $(addprefix $(OBJ_DIR)/,$(GEN_OBJ_NAME))
 
 all: $(NAME)
 
-$(NAME): $(OBJ)
+$(NAME):  $(BIN) $(LIB) $(OBJ)
 	$(OCAMLFIND) $(OCAMLOPT) $(OCAMLTOPFLAGS) $(OBJ) -o $(NAME)
 
 $(OBJ_DIR)/%.cmx : $(SRC_DIR)/%.ml
@@ -57,8 +62,12 @@ check: $(OBJ) $(TST_OBJ)
 gen: $(GEN_OBJ)
 	$(OCAMLFIND) $(OCAMLOPT) $(OCAMLTOPFLAGS) $(GEN_OBJ) -o gen
 	./gen > machine/utm.json
-debug: 
-debug:
+
+$(BIN):
+	opam install $(BIN_NAME)
+
+$(LIB):
+	opam install $(LIB_NAME)
 
 clean:
 	$(RM) $(OBJ_DIR)

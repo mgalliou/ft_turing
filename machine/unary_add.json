@@ -12,7 +12,8 @@
 			{ "read" : ".", "to_state": "eraselast", "write": ".", "action": "LEFT"}
 		],
 		"eraselast": [
-			{ "read" : "1", "to_state": "HALT", "write": ".", "action": "LEFT"}
+			{ "read" : "1", "to_state": "HALT", "write": ".", "action": "RIGHT"},
+			{ "read" : ".", "to_state": "HALT", "write": ".", "action": "RIGHT"}
 		]
 	}
 }
